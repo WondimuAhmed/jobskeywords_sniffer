@@ -22,6 +22,7 @@ library(igraph)
 library(ggraph)
 library(wordcloud)
 library(wordcloud2)
+library(ggpubr)
 
 ```
 
