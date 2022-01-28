@@ -1,0 +1,26 @@
+---
+title: "keywordssniffer"
+author: "Wondimu Ahmed"
+date: "1/28/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Goal of the project is to develop a shiny application that can help user extract keywords in a job description or a resume. 
+## Aquire important packages 
+```{r}
+library(udpipe)
+library(lattice)
+library(latticeExtra)
+library(ggplot2)
+library(plotly)
+library(igraph)
+library(ggraph)
+library(wordcloud)
+library(wordcloud2)
+
+```
+
