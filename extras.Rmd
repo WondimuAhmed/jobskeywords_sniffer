@@ -1,0 +1,141 @@
+---
+title: "kk"
+author: "Wondimu Ahmed"
+date: "1/28/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r cars}
+#  have three questions
+# 
+# can a line be added connecting T1 to T2 to T3 showing the trend
+# can the 95%CI for the mean be added to each point without having to calculate a "ymin" and "ymax" for all my response variables
+# if I have multiple response variables (in this example "st", "qt" and "zt") is there a way to produce these all at one as some sort of facet?
+        
+set.seed(42)
+n <- 100
+dat1 <- data.frame(id=1:n,
+                   treat = factor(sample(c('Trt','Ctrl'), n, rep=TRUE, prob=c(.5, .5))),
+                   time = factor("T1"),
+                   outcome1=rbinom(n = 100, size = 1, prob = 0.3),
+                   st=runif(n, min=24, max=60),
+                   qt=runif(n, min=.24, max=.60),
+                   zt=runif(n, min=124, max=360)
+)
+dat2 <- data.frame(id=1:n,
+                   treat = dat1$treat,
+                   time = factor("T2"),
+                   outcome1=dat1$outcome1,
+                   st=runif(n, min=34, max=80),
+                   qt=runif(n, min=.44, max=.90),
+                   zt=runif(n, min=214, max=460)
+)
+dat3 <- data.frame(id=1:n,
+                   treat = dat1$treat,
+                   time = factor("T3"),
+                   outcome1=dat1$outcome1,
+                   st=runif(n, min=44, max=90),
+                   qt=runif(n, min=.74, max=1.60),
+                   zt=runif(n, min=324, max=1760)
+)
+
+dat <- rbind(dat1,dat2, dat3)
+
+ggplot(dat,aes(x=mean(zt), y=time,group=treat))  +  geom_line() +geom_point()
+
+ ggplot(dat,aes(x=mean(zt), y=time)) + geom_point(aes(colour=treat)) + coord_flip() + geom_line(aes(colour=treat)) 
+ 
+ library(dplyr)
+dat1<- dat %>%
+  group_by(treat, time) %>%
+  summarise_at(vars(zt), list(Mean_Zt =mean))
+ggplot(dat1,aes(x=time, y= Mean_Zt, group=treat)) +  geom_point(aes(colour=treat)) +  geom_line(aes(colour=treat)) 
+ 
+
+ 
+mean(dat$zt)
+library(psych)
+describe.by(zt,treat,dat)
+names(dat)
+library(esquisse)
+esquisser(dat)
+```
+
+
+```{r}
+library(dplyr)
+dat1<- dat %>%
+  group_by(treat, time) %>%
+  summarise_at(vars(zt), list(Mean_Zt =mean))
+ggplot(dat1,aes(x=time, y= Mean_Zt, group=treat)) +  geom_point(aes(colour=treat)) +  geom_line(aes(colour=treat))
+```
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(Hmisc)
+dat %>% 
+  pivot_longer(-(1:4), names_to = "response_variables") %>% 
+  ggplot(.,aes(x=value, y=time, group = treat, color = treat)) +
+  facet_wrap(~response_variables, scales = "free") + 
+  coord_flip() +
+  stat_summary(fun.data ="mean_cl_normal",
+                 geom = "errorbar") +
+  stat_summary(fun = mean,
+               geom = "line") +
+    stat_summary(fun = mean,
+               geom = "point")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+library(ggplot2)
+library(rayshader)
+ggdiamonds = ggplot(diamonds) +
+  stat_density_2d(aes(x = x, y = depth, fill = stat(nlevel)),
+                  geom = "polygon", n = 100, bins = 10, contour = TRUE) +
+  facet_wrap(clarity~.) +
+  scale_fill_viridis_c(option = "A")
+
+par(mfrow = c(1, 2))
+
+plot_gg(ggdiamonds, width = 5, height = 5, raytrace = FALSE, preview = TRUE)
+plot_gg(ggdiamonds, width = 5, height = 5, multicore = TRUE, scale = 250,
+        zoom = 0.7, theta = 10, phi = 30, windowsize = c(800, 800))
+Sys.sleep(0.2)
+render_snapshot(clear = TRUE)
+```
+
+
+
+```{r}
+
+mtplot = ggplot(mtcars) +
+  geom_point(aes(x = mpg, y = disp, color = cyl)) +
+  scale_color_continuous(limits = c(0, 8))
+
+par(mfrow = c(1, 2))
+plot_gg(mtplot, width = 3.5, raytrace = FALSE, preview = TRUE)
+
+plot_gg(mtplot, width = 3.5, multicore = TRUE, windowsize = c(800, 800),
+        zoom = 0.85, phi = 35, theta = 30, sunangle = 225, soliddepth = -100)
+Sys.sleep(0.2)
+render_snapshot(clear = TRUE)
+```
+
+
+
+
+
+
